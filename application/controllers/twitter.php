@@ -27,7 +27,7 @@ class Twitter extends CI_Controller
 		// Loading session library to access the session
  		$this->load->library('session');
  		// Loading url helper library to use base_url and redirect function
- 		$this->load->helper('url'); 
+ 		$this->load->helper('url');
 
 		if($this->session->userdata('access_token') && $this->session->userdata('access_token_secret'))
 		{
@@ -50,12 +50,65 @@ class Twitter extends CI_Controller
 	{
 		$data['title'] = "Twitter Followers";
 		$data['heading'] = "Who's following whom?";
+		$data['authenticated'] = false;
+
+		if ($this->session->userdata('access_token') && $this->session->userdata('access_token_secret'))
+		{
+			$data['authenticated'] = true;
+		}
+		$data['screen_name'] = $this->session->userdata('twitter_screen_name');
 		$this->load->view('twitterview', $data);
+
+		$reauthenticate = $this->input->post('reauthenticate');
+ 		$unauthenticate = $this->input->post('unauthenticate');
+
+ 		if ($unauthenticate)
+ 		{
+ 			$this->unauthenticate();
+ 		}
+ 		elseif ($reauthenticate)
+ 		{
+ 			$this->reauthenticate();
+ 		}
 	}
 
-	public function get_followers($handle, $password)
+	/**
+	* Gets list of ids of twitter users that the logged in user is following
+	* @access  public
+	* @return  void
+	*/
+	public function get_friends()
 	{
-		return array($handle, $password);
+		$friends = $this->connection->get('friends/ids');
+		print json_encode($friends);
+	}
+
+	/**
+	* Gets logged in user's timeline of tweets
+	* @access  public
+	* @return  void
+	*/
+	public function get_timeline()
+	{
+		$timeline = $this->connection->get("statuses/home_timeline", array("count" => "200"));
+		print json_encode($timeline);
+	}
+
+	/**
+	* Reset Session and remove twitter credentials
+	* @access  public
+	* @return  void
+	*/
+	public function unauthenticate()
+	{
+		$this->reset_session();
+		redirect(base_url('/'));
+	}
+
+	public function reauthenticate()
+	{
+		$this->reset_session();
+		redirect(base_url('/index.php/twitter/auth'));
 	}
 
 	/**
@@ -65,6 +118,7 @@ class Twitter extends CI_Controller
 	 */
 	public function auth()
 	{
+
 		if($this->session->userdata('access_token') && $this->session->userdata('access_token_secret'))
 		{
 			// User is already authenticated. Add your user notification code here.
@@ -73,8 +127,7 @@ class Twitter extends CI_Controller
 		else
 		{
 			// Making a request for request_token
-			$request_token = $this->connection->getRequestToken(base_url('/twitter/callback'));
-
+			$request_token = $this->connection->getRequestToken(base_url('/index.php/twitter/callback'));
 			$this->session->set_userdata('request_token', $request_token['oauth_token']);
 			$this->session->set_userdata('request_token_secret', $request_token['oauth_token_secret']);
 			
@@ -101,7 +154,7 @@ class Twitter extends CI_Controller
 		if($this->input->get('oauth_token') && $this->session->userdata('request_token') !== $this->input->get('oauth_token'))
 		{
 			$this->reset_session();
-			redirect(base_url('/twitter/auth'));
+			redirect(base_url('/index.php/twitter/auth'));
 		}
 		else
 		{
@@ -144,7 +197,7 @@ class Twitter extends CI_Controller
 				{
 					// Most probably, authentication problems. Begin authentication process again.
 					$this->reset_session();
-					redirect(base_url('/twitter/auth'));
+					redirect(base_url('/index.php/twitter/auth'));
 				}
 				else
 				{
@@ -169,7 +222,7 @@ class Twitter extends CI_Controller
 			else
 			{
 				// User is not authenticated.
-				redirect(base_url('/twitter/auth'));
+				redirect(base_url('/index.php/twitter/auth'));
 			}
 		}
 	}

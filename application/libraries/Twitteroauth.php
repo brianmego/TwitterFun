@@ -180,6 +180,7 @@ class TwitterOAuth {
 		}
 		$request = OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $parameters);
 		$request->sign_request($this->sha1_method, $this->consumer, $this->token);
+
 		switch ($method) {
 		case 'GET':
 			return $this->http($request->to_url(), 'GET');
