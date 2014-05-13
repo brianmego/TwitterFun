@@ -79,7 +79,7 @@ class Twitter extends CI_Controller
 	*/
 	public function get_friends()
 	{
-		$friends = $this->connection->get('friends/ids');
+		$friends = $this->connection->get('friends/list', array("count" => "200"));
 		print json_encode($friends);
 	}
 
@@ -105,6 +105,11 @@ class Twitter extends CI_Controller
 		redirect(base_url('/'));
 	}
 
+	/**
+	 * Manually kick off a reauthentication process
+	 * @access public
+	 * @return void
+	 */
 	public function reauthenticate()
 	{
 		$this->reset_session();
@@ -112,7 +117,7 @@ class Twitter extends CI_Controller
 	}
 
 	/**
-	 * Here comes authentication process begin.
+	 * Begin Authentication Process
 	 * @access	public
 	 * @return	void
 	 */
@@ -176,53 +181,6 @@ class Twitter extends CI_Controller
 			{
 				// An error occured. Add your notification code here.
 				redirect(base_url('/'));
-			}
-		}
-	}
-	
-	public function post($in_reply_to)
-	{
-		$message = $this->input->post('message');
-		if(!$message || mb_strlen($message) > 140 || mb_strlen($message) < 1)
-		{
-			// Restrictions error. Notification here.
-			redirect(base_url('/'));
-		}
-		else
-		{
-			if($this->session->userdata('access_token') && $this->session->userdata('access_token_secret'))
-			{
-				$content = $this->connection->get('account/verify_credentials');
-				if(isset($content->errors))
-				{
-					// Most probably, authentication problems. Begin authentication process again.
-					$this->reset_session();
-					redirect(base_url('/index.php/twitter/auth'));
-				}
-				else
-				{
-					$data = array(
-						'status' => $message,
-						'in_reply_to_status_id' => $in_reply_to
-					);
-					$result = $this->connection->post('statuses/update', $data);
-
-					if(!isset($result->errors))
-					{
-						// Everything is OK
-						redirect(base_url('/'));
-					}
-					else
-					{
-						// Error, message hasn't been published
-						redirect(base_url('/'));
-					}
-				}
-			}
-			else
-			{
-				// User is not authenticated.
-				redirect(base_url('/index.php/twitter/auth'));
 			}
 		}
 	}
