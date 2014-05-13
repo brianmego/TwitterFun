@@ -26,8 +26,7 @@ function addMapMarker(tweet) {
     var marker = new google.maps.Marker({
         position: myLatlng,
         title: tweet.user.name,
-        map: map,
-        icon: tweet.user.profile_image_url
+        map: map
     });
     marker.setAnimation(google.maps.Animation.DROP);
     markers.push(marker);
