@@ -42,9 +42,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="inner cover">
+                <div class="inner cover" style="width:100%; height:100%">
                     <?php if ($authenticated): ?>
-                        <div id="map-canvas" style="width:100%; height:100%"/>
+                        <div id="map-canvas" style="width:100%; height:100%"></div>
                     <?php else: ?>
                         <h1 class="cover-heading">Twitter and Google Are Plotting</h1>
                         <p class="lead">
