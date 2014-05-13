@@ -15,7 +15,6 @@ function plotTweets() {
                     addMapMarker(tweet);
                 }
             });
-            console.log(response);
             showMarkers();
         });
 }
@@ -62,6 +61,9 @@ function initialize() {
       center: new google.maps.LatLng(0, 0),
       zoom: 2
     };
-    map = new google.maps.Map(document.getElementById("map-canvas"),
-        mapOptions);
+    var mapCanvas = document.getElementById("map-canvas");
+    if (mapCanvas) {
+        map = new google.maps.Map(mapCanvas,
+            mapOptions);
+    }
   }
