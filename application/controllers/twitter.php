@@ -48,8 +48,7 @@ class Twitter extends CI_Controller
 	
 	public function index()
 	{
-		$data['title'] = "Twitter Followers";
-		$data['heading'] = "Who's following whom?";
+		$data['title'] = "Plotting With Twitter";
 		$data['authenticated'] = false;
 
 		if ($this->session->userdata('access_token') && $this->session->userdata('access_token_secret'))
