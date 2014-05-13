@@ -48,7 +48,7 @@
                     <?php else: ?>
                         <h1 class="cover-heading">Twitter and Google Are Plotting</h1>
                         <p class="lead">
-                            Or Rather, they'd like to. Authenticate with your twitter credentials and you can help them!
+                            Or rather, they'd like to. Authenticate with your Twitter credentials and you can help them!
                         </p>
                     <?php endif; ?>
                 </div>
